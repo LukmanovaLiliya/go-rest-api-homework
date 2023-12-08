@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -39,11 +41,6 @@ var tasks = map[string]Task{
 	},
 }
 
-<<<<<<< HEAD
-// Ниже напишите обработчики для каждого эндпоинта
-// ...
-
-=======
 // Обработчик должен вернуть все задачи, которые хранятся в мапе.
 // Конечная точка /tasks.
 // Метод GET.
@@ -55,13 +52,13 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
 	_, err = w.Write(resp)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 }
 
 // Обработчик должен принимать задачу в теле запроса и сохранять ее в мапе.
@@ -135,12 +132,14 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 }
->>>>>>> 1ca1fb5 (изменения после ревью)
 func main() {
 	r := chi.NewRouter()
 
 	// здесь регистрируйте ваши обработчики
-	// ...
+	r.Get("/tasks", getTask)
+	r.Post("/tasks", postTask)
+	r.Get("/tasks/{id}", getTaskById)
+	r.Delete("/tasks/{id}", deleteTask)
 
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		fmt.Printf("Ошибка при запуске сервера: %s", err.Error())
